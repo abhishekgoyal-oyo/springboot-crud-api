@@ -1,5 +1,10 @@
 package com.crudapi.springboot.model;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "companies")
@@ -23,17 +28,22 @@ public class Company {
     @Column(name = "email")
     private String email;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
+    private Set<Department> departments = new HashSet<>();
+
     public  Company() {
 
     }
 
-    public Company(long id, String name, String address, String sector, long phone, String email) {
+    public Company(long id, String name, String address, String sector, long phone, String email, Set<Department> departments) {
         this.id = id;
         this.name = name;
         this.address = address;
         this.sector = sector;
         this.phone = phone;
         this.email = email;
+        this.departments = departments;
     }
 
     public long getId() {
@@ -83,4 +93,9 @@ public class Company {
     public void setEmail(String email) {
         this.email = email;
     }
+
+    public Set<Department> getDepartments() { return departments; }
+
+    public void setDepartments(Set<Department> departments) { this.departments = departments; }
+
 }

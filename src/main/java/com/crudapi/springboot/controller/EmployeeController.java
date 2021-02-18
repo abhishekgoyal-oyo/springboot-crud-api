@@ -1,12 +1,14 @@
 package com.crudapi.springboot.controller;
 
 import com.crudapi.springboot.exception.ResourceNotFoundException;
+import com.crudapi.springboot.model.Department;
 import com.crudapi.springboot.model.Employee;
 import com.crudapi.springboot.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,9 +44,16 @@ public class EmployeeController {
         Employee employee = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found for this id :: " + employeeId));
 
-        employee.setEmailId(employeeDetails.getEmailId());
-        employee.setLastName(employeeDetails.getLastName());
-        employee.setFirstName(employeeDetails.getFirstName());
+        employee.setDepartment(employeeDetails.getDepartment());
+        employee.setName(employeeDetails.getName());
+        employee.setEmail(employeeDetails.getEmail());
+        employee.setAddress(employeeDetails.getAddress());
+        employee.setGender(employeeDetails.getGender());
+        employee.setSalary(employeeDetails.getSalary());
+        employee.setDesignation(employeeDetails.getDesignation());
+        employee.setDateOfBirth(employeeDetails.getDateOfBirth());
+        employee.setDateOfJoining(employeeDetails.getDateOfJoining());
+        employee.setPhone(employeeDetails.getPhone());
         final Employee updatedEmployee = employeeRepository.save(employee);
         return ResponseEntity.ok(updatedEmployee);
     }
