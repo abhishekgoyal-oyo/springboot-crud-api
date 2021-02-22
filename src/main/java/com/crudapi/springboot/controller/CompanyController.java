@@ -1,6 +1,7 @@
 package com.crudapi.springboot.controller;
 
 import com.crudapi.springboot.dtos.CompanyDto;
+import com.crudapi.springboot.dtos.DepartmentDto;
 import com.crudapi.springboot.exception.ResourceNotFoundException;
 import com.crudapi.springboot.service.CompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,12 @@ public class CompanyController {
     public ResponseEntity<CompanyDto> getCompanyById(@PathVariable(value = "id") Long companyId)
             throws ResourceNotFoundException {
         return companyService.findById(companyId);
+    }
+
+    @GetMapping("/companies/{id}/departments")
+    public List<DepartmentDto> getDepartmentByCompanyId(@PathVariable(value = "id") Long companyId)
+            throws ResourceNotFoundException {
+        return companyService.getDepartments(companyId);
     }
 
     @PostMapping("/companies")

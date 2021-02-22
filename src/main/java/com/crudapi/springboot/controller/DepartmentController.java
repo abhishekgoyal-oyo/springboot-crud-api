@@ -28,7 +28,11 @@ public class DepartmentController {
         return departmentService.findById(departmentId);
     }
 
-    
+    @GetMapping("/departments/{id}/employees")
+    public List<EmployeeDto> getEmployeesByDepartmentId(@PathVariable(value = "id") Long departmentId)
+            throws ResourceNotFoundException {
+        return departmentService.getEmployees(departmentId);
+    }
 
     @PostMapping("/departments")
     public DepartmentDto createDepartment(@RequestBody DepartmentDto department) {
