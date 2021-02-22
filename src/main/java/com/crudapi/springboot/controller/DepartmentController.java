@@ -1,15 +1,13 @@
 package com.crudapi.springboot.controller;
 
+import com.crudapi.springboot.dtos.DepartmentDto;
+import com.crudapi.springboot.dtos.EmployeeDto;
 import com.crudapi.springboot.exception.ResourceNotFoundException;
-import com.crudapi.springboot.model.Department;
-import com.crudapi.springboot.repository.DepartmentRepository;
+import com.crudapi.springboot.service.DepartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.Column;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,48 +15,35 @@ import java.util.Map;
 @RequestMapping("/api/v1")
 public class DepartmentController {
     @Autowired
-    private DepartmentRepository departmentRepository;
+    private DepartmentService departmentService;
 
     @GetMapping("/departments")
-    public List<Department> getAllDepartments() {
-        return departmentRepository.findAll();
+    public List<DepartmentDto> getAllDepartments() {
+        return departmentService.findAll();
     }
 
     @GetMapping("/departments/{id}")
-    public ResponseEntity<Department> getDepartmentById(@PathVariable(value = "id") Long departmentId)
+    public ResponseEntity<DepartmentDto> getDepartmentById(@PathVariable(value = "id") Long departmentId)
             throws ResourceNotFoundException {
-        Department department = departmentRepository.findById(departmentId)
-                .orElseThrow(() -> new ResourceNotFoundException("Department not found for this id :: " + departmentId));
-        return ResponseEntity.ok().body(department);
+        return departmentService.findById(departmentId);
     }
 
+    
+
     @PostMapping("/departments")
-    public Department createDepartment(@RequestBody Department department) {
-        return departmentRepository.save(department);
+    public DepartmentDto createDepartment(@RequestBody DepartmentDto department) {
+        return departmentService.save(department);
     }
 
     @PutMapping("/departments/{id}")
-    public ResponseEntity<Department> updateDepartment(@PathVariable(value = "id") Long departmentId,
-                                                 @RequestBody Department departmentDetails) throws ResourceNotFoundException {
-        Department department = departmentRepository.findById(departmentId)
-                .orElseThrow(() -> new ResourceNotFoundException("Department not found for this id :: " + departmentId));
-
-        department.setName(departmentDetails.getName());
-        department.setCompany(departmentDetails.getCompany());
-        department.setEmail(departmentDetails.getEmail());
-        final Department updatedDepartment = departmentRepository.save(department);
-        return ResponseEntity.ok(updatedDepartment);
+    public ResponseEntity<DepartmentDto> updateDepartment(@PathVariable(value = "id") Long departmentId,
+                                                 @RequestBody DepartmentDto departmentDto) throws ResourceNotFoundException {
+        return departmentService.update(departmentId, departmentDto);
     }
 
     @DeleteMapping("/departments/{id}")
     public Map<String, Boolean> deleteDepartment(@PathVariable(value = "id") Long departmentId)
             throws ResourceNotFoundException {
-        Department department = departmentRepository.findById(departmentId)
-                .orElseThrow(() -> new ResourceNotFoundException("Department not found for this id :: " + departmentId));
-
-        departmentRepository.delete(department);
-        Map<String, Boolean> response = new HashMap<>();
-        response.put("deleted", Boolean.TRUE);
-        return response;
+        return  departmentService.delete(departmentId);
     }
 }
