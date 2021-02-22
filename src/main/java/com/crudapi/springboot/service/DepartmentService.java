@@ -1,20 +1,20 @@
 package com.crudapi.springboot.service;
 
 import com.crudapi.springboot.dtos.DepartmentDto;
+import com.crudapi.springboot.dtos.EmployeeDto;
 import com.crudapi.springboot.exception.ResourceNotFoundException;
 import com.crudapi.springboot.mapper.DepartmentMapper;
+import com.crudapi.springboot.mapper.EmployeeMapper;
 import com.crudapi.springboot.model.Company;
 import com.crudapi.springboot.model.Department;
+import com.crudapi.springboot.model.Employee;
 import com.crudapi.springboot.repository.CompanyRepository;
 import com.crudapi.springboot.repository.DepartmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class DepartmentService {
@@ -67,5 +67,16 @@ public class DepartmentService {
         Map<String, Boolean> response = new HashMap<>();
         response.put("deleted", Boolean.TRUE);
         return response;
+    }
+
+    public List<EmployeeDto> getEmployees(Long departmentId) throws ResourceNotFoundException {
+        Department department = departmentRepository.findById(departmentId)
+            .orElseThrow(() -> new ResourceNotFoundException("Department not found for this id :: " + departmentId));
+        Set<Employee> employees = department.getEmployees();
+        List<EmployeeDto> employeeDtos = new ArrayList<>(employees.size());
+        for (Employee employee : employees) {
+            employeeDtos.add(EmployeeMapper.INSTANCE.employeeToEmployeeDto(employee));
+        }
+        return employeeDtos;
     }
 }

@@ -1,18 +1,18 @@
 package com.crudapi.springboot.service;
 
 import com.crudapi.springboot.dtos.CompanyDto;
+import com.crudapi.springboot.dtos.DepartmentDto;
 import com.crudapi.springboot.exception.ResourceNotFoundException;
 import com.crudapi.springboot.mapper.CompanyMapper;
+import com.crudapi.springboot.mapper.DepartmentMapper;
 import com.crudapi.springboot.model.Company;
+import com.crudapi.springboot.model.Department;
 import com.crudapi.springboot.repository.CompanyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class CompanyService {
@@ -61,5 +61,16 @@ public class CompanyService {
         Map<String, Boolean> response = new HashMap<>();
         response.put("deleted", Boolean.TRUE);
         return response;
+    }
+
+    public List<DepartmentDto> getDepartments(Long companyId) throws ResourceNotFoundException {
+        Company company = companyRepository.findById(companyId)
+                .orElseThrow(() -> new ResourceNotFoundException("Company not found for this id :: " + companyId));
+        Set<Department> departments = company.getDepartments();
+        List<DepartmentDto> departmentDtos = new ArrayList<>(departments.size());
+        for (Department department : departments) {
+            departmentDtos.add(DepartmentMapper.INSTANCE.departmentToDepartmentDto(department));
+        }
+        return departmentDtos;
     }
 }
